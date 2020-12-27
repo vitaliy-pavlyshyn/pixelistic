@@ -1,0 +1,73 @@
+services:
+    fe:
+        build:
+            context: ./pixelistic_fe
+            dockerfile: Dockerfile
+            args:
+            - REACT_APP_API_WEB=${REACT_APP_API_WEB}
+            - REACT_APP_AWS_S3=${REACT_APP_AWS_S3}
+            - REACT_APP_GOOGLE_ID=${REACT_APP_GOOGLE_ID}
+            - REACT_APP_FACEBOOK_ID=${REACT_APP_FACEBOOK_ID}              
+        init: true
+        env_file: .env
+        environment:
+            - REACT_APP_API_WEB=${REACT_APP_API_WEB}
+            - REACT_APP_AWS_S3=${REACT_APP_AWS_S3}
+            - REACT_APP_GOOGLE_ID=${REACT_APP_GOOGLE_ID}
+            - REACT_APP_FACEBOOK_ID=${REACT_APP_FACEBOOK_ID}           
+        ports:
+            - "80:80"
+        restart: always    
+        depends_on:
+            - be
+        networks:
+            - pixel-net
+    be:
+        build:
+            context: ./pixelistic_be
+            dockerfile: Dockerfile
+        init: true
+        env_file: .env
+        environment:
+          - FE_URL=${FE_URL}
+          - FE_PORT=${FE_PORT}
+          - GMAIL_PASS=${GMAIL_PASS}
+          - GMAIL_USER=${GMAIL_USER}
+          - REACT_APP_AWS_S3=${REACT_APP_AWS_S3}
+          - AWS_KEY_ID=${AWS_KEY_ID}
+          - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+          - AWS_REGION=${AWS_REGION}
+          - MONGO_URI=${MONGO_URI}
+        ports:
+            - "3000:3000"
+        restart: always
+        depends_on:
+            - mongo_db
+        # entrypoint: ["./wait-for-it.sh", "mongo_db:27017","-t", "15", "--","node", "./bin/www"]
+        networks:
+            - pixel-net
+    mongo_db:
+        image: mongo:4.4.2
+        init: true
+        ports:
+            - "27017:27017"
+        healthcheck:
+            test: ["CMD", "mongo"]
+            interval: 30s
+            timeout: 10s
+            retries: 5
+        restart: always    
+        # volumes:
+        #     - ./mongo-init.sh:/docker-entrypoint-initdb.d/mongo-init.sh
+        #     - mongo-data:/data/db:cached
+        env_file: .env        
+        environment:
+            - MONGO_INITDB_ROOT_USERNAME=${DB_NAME}
+            - MONGO_INITDB_ROOT_USERNAME=${DB_USER}
+            - MONGO_INITDB_ROOT_PASSWORD=${DB_PASSWORD}
+        networks:
+            - pixel-net
+networks:
+    pixel-net:
+# volumes:
+#     mongo-data:
