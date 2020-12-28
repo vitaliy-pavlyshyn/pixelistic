@@ -69,4 +69,4 @@ stages:
       inputs:
         azureSubscription: 'Azure subscription 1(ff559226-e75f-4d57-97fe-ce16f6fb2101)'
         appName: 'pixelistic-staging'
-        multicontainerConfigFile: './docker-compose.yml'
+        multicontainerConfigFile: '**/docker-compose.yaml'
