@@ -55,7 +55,7 @@ stages:
       condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
       inputs:
         targetType: 'inline'
-        script: 'mv $(envprod.secureFilePath) .env'
+        script: 'mv $(envprod.secureFilePath) ./.env'
 
     - task: DownloadSecureFile@1
       name: download_env_fe
@@ -67,7 +67,7 @@ stages:
       condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
       inputs:
         targetType: 'inline'
-        script: 'mv $(envprod.secureFilePath) /pixelistic_fe/.env'
+        script: 'mv $(envprod.secureFilePath) ./pixelistic_fe/.env'
     - task: AzureWebAppContainer@1
       inputs:
         azureSubscription: 'Azure subscription 1(ff559226-e75f-4d57-97fe-ce16f6fb2101)'
