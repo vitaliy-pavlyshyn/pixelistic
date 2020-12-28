@@ -45,8 +45,31 @@ stages:
         containerRegistry: $(dockerRegistryServiceConnection)
         tags: |
           $(tag)
+    - task: DownloadSecureFile@1
+      name: envprod
+      condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
+      inputs:
+        secureFile: 'env-compose'
+    - task: Bash@3
+      name: compose
+      condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
+      inputs:
+        targetType: 'inline'
+        script: 'mv $(envprod.secureFilePath) .env'
+
+    - task: DownloadSecureFile@1
+      name: env_compose
+      condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
+      inputs:
+        secureFile: 'env-compose'
+    - task: Bash@3
+      name: env_fe
+      condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
+      inputs:
+        targetType: 'inline'
+        script: 'mv $(envprod.secureFilePath) /pixelistic_fe/.env'
     - task: AzureWebAppContainer@1
       inputs:
         azureSubscription: 'Azure subscription 1(ff559226-e75f-4d57-97fe-ce16f6fb2101)'
         appName: 'pixelistic-staging'
-        multicontainerConfigFile: '**/docker-compose.yml'
+        multicontainerConfigFile: '$(Build.SourcesDirectory) docker-compose.yml'
