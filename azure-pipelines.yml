@@ -46,7 +46,7 @@ stages:
         tags: |
           $(tag)
     - task: DownloadSecureFile@1
-      name: env_compose
+      name: download_env_compose
       condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
       inputs:
         secureFile: 'env_compose'
@@ -58,7 +58,7 @@ stages:
         script: 'mv $(envprod.secureFilePath) .env'
 
     - task: DownloadSecureFile@1
-      name: env_fe
+      name: download_env_fe
       condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
       inputs:
         secureFile: 'env_fe'
