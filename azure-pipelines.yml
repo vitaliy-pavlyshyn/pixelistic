@@ -47,24 +47,20 @@ stages:
           $(tag)
     - task: DownloadSecureFile@1
       name: download_env_compose
-      condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
       inputs:
         secureFile: 'env_compose'
     - task: Bash@3
       name: env_compose
-      condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
       inputs:
         targetType: 'inline'
         script: 'mv $(envprod.secureFilePath) ./.env'
 
     - task: DownloadSecureFile@1
       name: download_env_fe
-      condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
       inputs:
         secureFile: 'env_fe'
     - task: Bash@3
       name: env_fe
-      condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
       inputs:
         targetType: 'inline'
         script: 'mv $(envprod.secureFilePath) ./pixelistic_fe/.env'
